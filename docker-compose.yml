@@ -1,0 +1,33 @@
+version: '2.1'
+
+services:
+  app:
+    build: .
+    #volumes:
+    #  - .:/app
+    ports:
+      - "8080:8080"
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    entrypoint: ["/bin/sh", "entrypoint.sh"]
+
+  elasticsearch:
+    image: bitnami/elasticsearch:6.1.1-r2
+    #    volumes:
+    #  - 'es_data:/usr/share/elasticsearch/data'
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - bootstrap.memory_lock=true
+      - cluster.name=springelasticgenie
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - ELASTICSEARCH_CLUSTER_NAME=es
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
